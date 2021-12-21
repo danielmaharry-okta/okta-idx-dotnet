@@ -1178,14 +1178,6 @@ namespace Okta.Idx.Sdk
             return await EnrollAuthenticatorAsync(selectAuthenticatorRequest, idxContext, cancellationToken);
         }
 
-        /// <inheritdoc/>
-        public async Task<PollResponse> PollOnceAsync(EnrollPollOptions enrollPollRemediationOption, string stateHandle)
-        {
-            return await enrollPollRemediationOption.PollOnceAsync(stateHandle);
-        }
-
-        
-
         private async Task<AuthenticationResponse> EnrollAuthenticatorAsync(IdxRequestPayload selectAuthenticatorRequest, IIdxContext idxContext, CancellationToken cancellationToken = default)
         {
             // Re-entry flow with context
@@ -1219,10 +1211,9 @@ namespace Okta.Idx.Sdk
             {
                 currentRemediationType = RemediationType.EnrollAuthenticator;
             }
-            else if (selectAuthenticatorResponse.ContainsRemediationOption(RemediationType.EnrollPoll, out enrollPollRemediationOption))
+            else if (selectAuthenticatorResponse.ContainsRemediationOption(RemediationType.EnrollPoll))
             {
                 currentRemediationType = RemediationType.EnrollPoll;
-                selectEnrollmentChannelRemedationOption = selectAuthenticatorResponse.FindRemediationOption(RemediationType.SelectEnrollmentChannel);
             }
 
             if (currentRemediationType != RemediationType.EnrollPoll &&
@@ -1239,18 +1230,16 @@ namespace Okta.Idx.Sdk
                     selectAuthenticatorResponse);
             }
 
-            return new AuthenticationResponse
+            var authenticationResponse = new AuthenticationResponse
             {
                 IdxContext = idxContext,
                 AuthenticationStatus = status,
-                EnrollPollOptions = new EnrollPollOptions
-                {
-                    EnrollPollRemediationOption = enrollPollRemediationOption,
-                    SelectEnrollmentChannelRemediationOption = selectEnrollmentChannelRemedationOption,
-                    StateHandle = selectAuthenticatorResponse.StateHandle,
-                },
                 CurrentAuthenticator = IdxResponseHelper.ConvertToAuthenticator(selectAuthenticatorResponse.Authenticators.Value, selectAuthenticatorResponse.CurrentAuthenticator.Value),
             };
+
+            authenticationResponse.OktaVerifyEnrollOptions = new OktaVerifyEnrollOptions(authenticationResponse, selectAuthenticatorResponse);
+
+            return authenticationResponse;
         }
 
         private static bool IsRemediationRequireCredentials(string remediationOptionName, IIdxResponse idxResponse)

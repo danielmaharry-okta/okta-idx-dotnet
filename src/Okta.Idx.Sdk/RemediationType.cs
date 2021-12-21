@@ -71,6 +71,11 @@ namespace Okta.Idx.Sdk
         public static readonly string SelectEnrollmentChannel = "select-enrollment-channel";
 
         /// <summary>
+        /// enrollment-channel-data
+        /// </summary>
+        public static readonly string EnrollmentChannelData = "enrollment-channel-data";
+
+        /// <summary>
         /// skip
         /// </summary>
         public static readonly string Skip = "skip";

@@ -1,0 +1,28 @@
+@model embedded_auth_with_sdk.Models.EnrollOktaVerifyAuthenticatorViewModel
+
+@{
+    ViewBag.Title = ViewBag.Title ?? "Enroll Okta Verify";
+}
+
+<div class="row d-center">
+    <div class="col-md-8">
+        @using (Html.BeginForm("OktaVerifyEnrollWithPhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            <h4>Set up Okta Verify via sms link</h4>
+
+            <div class="form-group">
+                <label for="countryCode">Country Code</label>
+                @Html.TextBox("CountryCode", "", new { id = "countryCode" })
+                <input type="text" id="countryCode" value="+1" />
+
+                <label for="phoneNumber">Phone</label>
+                @Html.TextBox("PhoneNumber", "", new { id = "phoneNumber" })
+
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

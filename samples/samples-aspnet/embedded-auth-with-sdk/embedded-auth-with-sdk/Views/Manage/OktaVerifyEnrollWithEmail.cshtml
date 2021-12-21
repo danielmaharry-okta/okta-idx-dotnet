@@ -1,0 +1,19 @@
+@model embedded_auth_with_sdk.Models.EnrollOktaVerifyAuthenticatorViewModel
+
+@{
+    ViewBag.Title = ViewBag.Title ?? "Enroll Okta Verify";
+}
+
+<div class="row d-center">
+    <div class="col-md-8">
+        @using (Html.BeginForm("OktaVerifyEnrollWithEmail", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            <h4>Set up Okta Verify via email link</h4>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                @Html.TextBox("Email", "", new { id = "email" })                
+            </div>
+        }
+    </div>
+</div>

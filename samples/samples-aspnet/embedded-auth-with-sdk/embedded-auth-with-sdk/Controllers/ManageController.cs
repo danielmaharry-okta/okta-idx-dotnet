@@ -232,10 +232,60 @@
             return View(model);
         }
 
-        public ActionResult EnrollOktaVerifyAuthenticator()
+        public ActionResult OktaVerifyEnrollAuthenticator()
         {
-            var pollConfig = (OktaVerifyPollConfig)Session["OktaVerifyPollConfig"];
-            return View(pollConfig.ViewModel);
+            var oktaVerifyEnrollmentModel = (OktaVerifyEnrollmentModel)Session[nameof(OktaVerifyEnrollmentModel)];
+            return View("OktaVerifyEnrollWithQrCode", oktaVerifyEnrollmentModel.ViewModel);
+        }
+
+        [HttpGet]
+        public ActionResult OktaVerifySelectEnrollmentChannel()        
+        {
+            var oktaVerifyEnrollmentModel = (OktaVerifyEnrollmentModel)Session[nameof(OktaVerifyEnrollmentModel)];
+            var selectEnrollmentChannelViewModel = new OktaVerifySelectEnrollmentChannelModel(oktaVerifyEnrollmentModel.OktaVerifyEnrollOptions);
+            return View(selectEnrollmentChannelViewModel);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> OktaVerifySelectEnrollmentChannel(OktaVerifySelectEnrollmentChannelModel model)
+        {
+            var oktaVerifyEnrollmentModel = (OktaVerifyEnrollmentModel)Session[nameof(OktaVerifyEnrollmentModel)];
+            if (!ModelState.IsValid)
+            {
+                var selectEnrollmentChannelViewModel = new OktaVerifySelectEnrollmentChannelModel(oktaVerifyEnrollmentModel.OktaVerifyEnrollOptions)
+                {
+                    SelectedChannel = model.SelectedChannel,
+                };
+                return View(selectEnrollmentChannelViewModel);
+            }
+
+            await oktaVerifyEnrollmentModel.SelectEnrollmentChannelAsync(model.SelectedChannel);
+
+            switch (model.SelectedChannel)
+            {
+                case "email":
+                    return View("OktaVerifyEnrollWithEmail");
+                case "sms":
+                    return View("OktaVerifyEnrollWithPhoneNumber");
+            }
+            
+            throw new ArgumentException($"Unrecognized Okta Verify channel: {model.SelectedChannel}");
+        }
+
+        [HttpPost]
+        public ActionResult OktaVerifyEnrollWithEmail(OktaVerifyEnrollWithEmailModel emailModel)
+        {
+            var oktaVerifyEnrollmentModel = (OktaVerifyEnrollmentModel)Session[nameof(OktaVerifyEnrollmentModel)];
+            _ = oktaVerifyEnrollmentModel.SendLinkToEmailAsync(emailModel.Email);
+            return View("OktaVerifyEnrollPoll");
+        }
+
+        [HttpPost]
+        public ActionResult OktaVerifyEnrollWithPhoneNumber(OktaVerifyEnrollWithPhoneNumberModel phoneNumberModel)
+        {
+            var oktaVerifyEnrollmentModel = (OktaVerifyEnrollmentModel)Session[nameof(OktaVerifyEnrollmentModel)];
+            _ = oktaVerifyEnrollmentModel.SendLinkToPhoneNumberAsync($"{phoneNumberModel.CountryCode}{phoneNumberModel.PhoneNumber}");
+            return View("OktaVerifyEnrollPoll");
         }
 
         [HttpPost]
@@ -473,9 +523,9 @@
                                 }
                                 else if (enrollResponse.CurrentAuthenticator?.Name == "Okta Verify")
                                 {
-                                    Session["OktaVerifyPollConfig"] = new OktaVerifyPollConfig(enrollResponse);
+                                    Session[nameof(OktaVerifyEnrollmentModel)] = new OktaVerifyEnrollmentModel(enrollResponse);
                                     
-                                    return RedirectToAction("EnrollOktaVerifyAuthenticator", "Manage");
+                                    return RedirectToAction("OktaVerifyEnrollAuthenticator", "Manage");
                                 }
                                 return RedirectToAction("VerifyAuthenticator", "Manage");
                             }
@@ -497,9 +547,9 @@
 
         public async Task<ActionResult> Poll()
         {
-            var pollConfig = (OktaVerifyPollConfig)Session["OktaVerifyPollConfig"];
+            var oktaVerifyEnrollmentModel = (OktaVerifyEnrollmentModel)Session[nameof(OktaVerifyEnrollmentModel)];
 
-            var pollResponse = await _idxClient.PollOnceAsync(pollConfig.EnrollPollOptions, pollConfig.StateHandle);            
+            var pollResponse = await oktaVerifyEnrollmentModel.PollAsync();
             if (!pollResponse.ContinuePolling)
             {
                 var authenticators = (List<AuthenticatorViewModel>)Session["authenticators"];
