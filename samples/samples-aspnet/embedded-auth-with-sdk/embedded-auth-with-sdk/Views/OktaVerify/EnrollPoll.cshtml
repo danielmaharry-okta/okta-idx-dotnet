@@ -1,4 +1,4 @@
-﻿@model embedded_auth_with_sdk.Models.EnrollOktaVerifyAuthenticatorViewModel
+﻿@model embedded_auth_with_sdk.Models.OktaVerifyEnrollModel
 
 @{
     ViewBag.Title = ViewBag.Title ?? "Enroll Okta Verify";
@@ -10,19 +10,9 @@
         <h4>Set up Okta Verify</h4>
         <ol>
             <li>On your mobile device, download the Okta Verify app from the App Store (iPhone and iPad) or Google Play (Android devices).</li>
-            <li>Open the app and follow the instructions to add your account</li>
-            <li>When prompted, tap Scan a QR code, then scan the QR code below:</li>
+            <li>@Model.Message</li>
         </ol>
-        <hr />
-        <div class="form-group">
-            <div class="col-md-10">
-
-                <img src=@Model.QrCodeHref />
-            </div>
-            <div class="col-md-10">
-                <a href="./OktaVerifySelectEnrollmentChannel">Can't scan?</a>
-            </div>
-        </div>
+        <hr />        
     </div>
 </div>
 

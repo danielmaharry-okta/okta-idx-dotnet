@@ -320,6 +320,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InteractionCodeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OktaVerifyController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -329,12 +330,12 @@
     <Compile Include="Models\BaseViewModel.cs" />
     <Compile Include="Models\ChangePasswordViewModel.cs" />
     <Compile Include="Models\EnrollGoogleAuthenticatorViewModel.cs" />
-    <Compile Include="Models\EnrollOktaVerifyAuthenticatorViewModel.cs" />
     <Compile Include="Models\EnrollPhoneViewModel.cs" />
     <Compile Include="Models\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\InteractionCodeErrorViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
-    <Compile Include="Models\OktaVerifyEnrollmentModel.cs" />
+    <Compile Include="Models\OktaVerifyEnrollModel.cs" />
+    <Compile Include="Models\OktaVerifyEnrollPollModel.cs" />
     <Compile Include="Models\OktaVerifyEnrollWithEmailModel.cs" />
     <Compile Include="Models\OktaVerifyEnrollWithPhoneNumberModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
@@ -402,11 +403,11 @@
     <Content Include="Views\InteractionCode\Error.cshtml" />
     <Content Include="Views\Manage\EnrollGoogleAuthenticator.cshtml" />
     <Content Include="Views\Manage\VerifyTotp.cshtml" />
-    <Content Include="Views\Manage\OktaVerifyEnrollPoll.cshtml" />
-    <Content Include="Views\Manage\OktaVerifySelectEnrollmentChannel.cshtml" />
-    <Content Include="Views\Manage\OktaVerifyEnrollWithEmail.cshtml" />
-    <Content Include="Views\Manage\OktaVerifyEnrollWithPhone.cshtml" />
-    <Content Include="Views\Manage\OktaVerifyEnrollWithQrCode.cshtml" />
+    <Content Include="Views\OktaVerify\EnrollPoll.cshtml" />
+    <Content Include="Views\OktaVerify\SelectEnrollmentChannel.cshtml" />
+    <Content Include="Views\OktaVerify\EnrollWithEmail.cshtml" />
+    <Content Include="Views\OktaVerify\EnrollWithPhoneNumber.cshtml" />
+    <Content Include="Views\OktaVerify\EnrollWithQrCode.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

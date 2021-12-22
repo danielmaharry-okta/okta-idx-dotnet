@@ -1,4 +1,4 @@
-﻿@model embedded_auth_with_sdk.Models.EnrollOktaVerifyAuthenticatorViewModel
+﻿@model embedded_auth_with_sdk.Models.OktaVerifyEnrollModel
 
 @{
     ViewBag.Title = ViewBag.Title ?? "Enroll Okta Verify";
@@ -13,7 +13,17 @@
             <li>Open the app and follow the instructions to add your account</li>
             <li>@Model.Message</li>
         </ol>
-        <hr />        
+        <hr />
+        <div class="form-group">
+            <div class="col-md-10">
+                <img src=@Model.QrCode />
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.ActionLink("Can't scan?", "SelectEnrollmentChannel")
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -17,11 +17,10 @@ namespace Okta.Idx.Sdk
         {
             this.AuthenticationResponse = authenticationResponse;
             this.IdxContext = authenticationResponse.IdxContext;
-            this.IdxResponse = idxResponse;
             this.StateHandle = idxResponse.StateHandle;
+            this.EnrollPollRemediationOption = idxResponse.FindRemediationOption(RemediationType.EnrollPoll);
+            this.SelectEnrollmentChannelRemediationOption = idxResponse.FindRemediationOption(RemediationType.SelectEnrollmentChannel);
         }
-
-        protected internal IIdxResponse IdxResponse { get; set; }
 
         protected internal AuthenticationResponse AuthenticationResponse { get; set; }
 
@@ -30,17 +29,17 @@ namespace Okta.Idx.Sdk
         /// <summary>
         /// Gets the enroll-poll remediation option.
         /// </summary>
-        protected internal IRemediationOption EnrollPollRemediationOption => IdxResponse?.FindRemediationOption(RemediationType.EnrollPoll);
+        protected internal IRemediationOption EnrollPollRemediationOption { get; }
 
         /// <summary>
         /// Gets the select-enrollment-channel remediation option.
         /// </summary>
-        protected internal IRemediationOption SelectEnrollmentChannelRemediationOption => IdxResponse?.FindRemediationOption(RemediationType.SelectEnrollmentChannel);
+        protected internal IRemediationOption SelectEnrollmentChannelRemediationOption { get; }
 
         /// <summary>
         /// Gets the enrollment-channel-data remediation option.
         /// </summary>
-        protected internal IRemediationOption EnrollmentChannelDataRemediationOption => IdxResponse?.FindRemediationOption(RemediationType.EnrollmentChannelData);
+        protected internal IRemediationOption EnrollmentChannelDataRemediationOption { get; private set; }
 
         /// <summary>
         /// Gets or sets the state handle.
@@ -51,6 +50,8 @@ namespace Okta.Idx.Sdk
         /// Gets a value indicating how long to wait before the next call.
         /// </summary>
         public int? Refresh { get => EnrollPollRemediationOption.Refresh; }
+
+        public string QrCode { get => AuthenticationResponse?.CurrentAuthenticator?.QrCode?.Href; }
 
         public string AuthenticatorId
         {
@@ -98,10 +99,6 @@ namespace Okta.Idx.Sdk
                 CurrentAuthenticator = IdxResponseHelper.ConvertToAuthenticator(sendEnrollmentDataResponse.Authenticators.Value, sendEnrollmentDataResponse.CurrentAuthenticator.Value),
             };
 
-            // maintain consistent state of current object.
-            this.IdxResponse = sendEnrollmentDataResponse;
-            this.AuthenticationResponse = authenticationResponse;
-
             return authenticationResponse;
         }
 
@@ -109,7 +106,6 @@ namespace Okta.Idx.Sdk
         {
             ValidateEnrollmentChannel(enrollmentChannelName);
 
-            // ideally the payload would be derived by reading the structure of the remediation option value array; too complex to take on now
             IdxRequestPayload idxRequestPayload = new IdxRequestPayload
             {
                 StateHandle = StateHandle,
@@ -126,11 +122,7 @@ namespace Okta.Idx.Sdk
                 CurrentAuthenticator = IdxResponseHelper.ConvertToAuthenticator(selectEnrollmentChannelResponse.Authenticators.Value, selectEnrollmentChannelResponse.CurrentAuthenticator.Value),
             };
 
-            authenticationResponse.OktaVerifyEnrollOptions = new OktaVerifyEnrollOptions(authenticationResponse, selectEnrollmentChannelResponse);
-
-            // maintain consistent state of current object.
-            this.IdxResponse = selectEnrollmentChannelResponse;
-            this.AuthenticationResponse = authenticationResponse;
+            EnrollmentChannelDataRemediationOption = selectEnrollmentChannelResponse.FindRemediationOption(RemediationType.EnrollmentChannelData);
 
             return authenticationResponse;
         }
