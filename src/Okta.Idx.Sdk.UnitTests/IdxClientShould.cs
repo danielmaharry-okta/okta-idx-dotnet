@@ -6729,16 +6729,16 @@ namespace Okta.Idx.Sdk.UnitTests
                                        AuthenticatorId = "auttzfsi7LmtMLrny5d6"
                                    }, Substitute.For<IIdxContext>());
 
-            authResponse.EnrollPollOptions.Should().NotBeNull();
-            authResponse.EnrollPollOptions.SelectEnrollmentChannelRemediationOption.Should().NotBeNull();
-            authResponse.EnrollPollOptions.SelectEnrollmentChannelRemediationOption.Form.Should().NotBeNull();
+            authResponse.OktaVerifyEnrollOptions.Should().NotBeNull();
+            authResponse.OktaVerifyEnrollOptions.SelectEnrollmentChannelRemediationOption.Should().NotBeNull();
+            authResponse.OktaVerifyEnrollOptions.SelectEnrollmentChannelRemediationOption.Form.Should().NotBeNull();
 
             authResponse.AuthenticationStatus.Should().Be(AuthenticationStatus.AwaitingAuthenticatorVerification);
             authResponse.CurrentAuthenticator.Id.Should().Be("auttzfsi7LmtMLrny5d6");
             authResponse.CurrentAuthenticator.QrCode.Should().NotBeNull();
             authResponse.CurrentAuthenticator.QrCode.Href.Should().NotBeNull();
-            TestEnrollPollOptions testEnrollPollOptions = new TestEnrollPollOptions(authResponse.EnrollPollOptions);
-            RemediationOptionParameter[] parameters = testEnrollPollOptions.GetChannelOptions().ToArray();
+            authResponse.OktaVerifyEnrollOptions.Should().NotBeNull();
+            RemediationOptionParameter[] parameters = authResponse.OktaVerifyEnrollOptions.GetChannelOptions().ToArray();
             parameters.Length.Should().Be(3);
             parameters[0].Label.Should().Be("QRCODE");
             parameters[0].Value.Should().Be("qrcode");
