@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30711.63
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "embedded-auth-with-sdk", "embedded-auth-with-sdk\embedded-auth-with-sdk.csproj", "{88504747-10B6-425F-B27D-66426F7ED199}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "embedded-auth-with-sdk.E2ETests", "Okta.Idx.Sdk.E2ETests\embedded-auth-with-sdk.E2ETests.csproj", "{1E45AB5D-2869-4116-AAD6-6738E61503A8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Okta.Idx.Sdk", "..\..\..\src\Okta.Idx.Sdk\Okta.Idx.Sdk.csproj", "{CCA8BEA2-FC81-44BA-B166-028A1552B81C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Okta.Idx.Sdk.IntegrationTests", "..\..\..\src\Okta.Idx.Sdk.IntegrationTests\Okta.Idx.Sdk.IntegrationTests.csproj", "{46FD93D6-87BC-41CE-9B64-C053D3B9FC0B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Okta.Idx.Sdk.UnitTests", "..\..\..\src\Okta.Idx.Sdk.UnitTests\Okta.Idx.Sdk.UnitTests.csproj", "{0E1746F1-44F2-4282-8B16-E51E50F09D01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{CCA8BEA2-FC81-44BA-B166-028A1552B81C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCA8BEA2-FC81-44BA-B166-028A1552B81C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCA8BEA2-FC81-44BA-B166-028A1552B81C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46FD93D6-87BC-41CE-9B64-C053D3B9FC0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46FD93D6-87BC-41CE-9B64-C053D3B9FC0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46FD93D6-87BC-41CE-9B64-C053D3B9FC0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46FD93D6-87BC-41CE-9B64-C053D3B9FC0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E1746F1-44F2-4282-8B16-E51E50F09D01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E1746F1-44F2-4282-8B16-E51E50F09D01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E1746F1-44F2-4282-8B16-E51E50F09D01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E1746F1-44F2-4282-8B16-E51E50F09D01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

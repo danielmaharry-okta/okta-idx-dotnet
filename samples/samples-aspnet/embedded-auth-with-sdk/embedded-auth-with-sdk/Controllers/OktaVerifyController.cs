@@ -89,7 +89,7 @@ namespace embedded_auth_with_sdk.Controllers
                 var authenticators = (List<AuthenticatorViewModel>)Session["authenticators"];
                 var oktaVerifyAuthenticator = authenticators.Where(authenticatorViewModel => authenticatorViewModel.Name == "Okta Verify").First();
                 authenticators.Remove(oktaVerifyAuthenticator);
-                pollResponse.Next = "/Manage/SelectAuthenticator";
+                pollResponse.Next = "/Account/Login";
             }
 
             return Json(pollResponse, JsonRequestBehavior.AllowGet);
