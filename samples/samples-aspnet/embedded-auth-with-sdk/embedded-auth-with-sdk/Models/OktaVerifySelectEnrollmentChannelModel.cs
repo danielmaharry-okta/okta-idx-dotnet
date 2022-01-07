@@ -1,4 +1,4 @@
-﻿using Okta.Idx.Sdk;
+﻿using Okta.Idx.Sdk.OktaVerify;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,12 +29,12 @@ namespace embedded_auth_with_sdk.Models
             set;
         }
 
-        public IList<OktaVerifySelectEnrollmentChannelParameterModel> RemediationOptionParameters 
+        public IList<OktaVerifySelectEnrollmentChannelParameterModel> EnrollmentChannelOptions 
         {
             get => EnrollPollOptions?
                 .GetChannelOptions()
                 .Where(rop => rop.Value != OktaVerifyEnrollmentChannel.QrCode)
-                .Select(remediationOptionParameter => new OktaVerifySelectEnrollmentChannelParameterModel(remediationOptionParameter))
+                .Select(optionParameter => new OktaVerifySelectEnrollmentChannelParameterModel(optionParameter))
                 .ToList();
         } 
     }

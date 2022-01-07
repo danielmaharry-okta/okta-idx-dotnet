@@ -3,7 +3,7 @@
 namespace embedded_auth_with_sdk.Controllers
 {
     using embedded_auth_with_sdk.Models;
-    using Okta.Idx.Sdk;
+    using Okta.Idx.Sdk.OktaVerify;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,12 @@ namespace embedded_auth_with_sdk.Controllers
 
     public class OktaVerifyController : Controller
     {
+        public ActionResult SelectAuthenticatorMethod()
+        {
+            var oktaVerifyAuthenticationOptions = (OktaVerifyAuthenticationOptions)Session[nameof(OktaVerifyAuthenticationOptions)];
+            return View(new OktaVerifySelectAuthenticatorMethodModel(oktaVerifyAuthenticationOptions));
+        }
+
         public ActionResult Enroll()
         {
             var oktaVerifyEnrollOptions = (OktaVerifyEnrollOptions)Session[nameof(OktaVerifyEnrollOptions)];
@@ -73,26 +79,24 @@ namespace embedded_auth_with_sdk.Controllers
             _ = oktaVerifyEnrollOptions.SendLinkToPhoneNumberAsync($"{phoneNumberModel.CountryCode}{phoneNumberModel.PhoneNumber}");
             var oktaVerifyEnrollModel = new OktaVerifyEnrollModel(oktaVerifyEnrollOptions)
             {
-                Message = "A activation link was sent to your phone via sms, use it to complete Okta Verify enrollment."
+                Message = "An activation link was sent to your phone via sms, use it to complete Okta Verify enrollment."
             };
 
             return View("EnrollPoll", oktaVerifyEnrollModel);
         }
 
-        public async Task<ActionResult> Poll()
+        public async Task<ActionResult> EnrollPoll()
         {
-            var oktaVerifyEnrollmentModel = (OktaVerifyEnrollOptions)Session[nameof(OktaVerifyEnrollOptions)];
+            var oktaVerifyEnrollmentOptions = (OktaVerifyEnrollOptions)Session[nameof(OktaVerifyEnrollOptions)];
 
-            var pollResponse = await oktaVerifyEnrollmentModel.PollOnceAsync();
+            var pollResponse = await oktaVerifyEnrollmentOptions.PollOnceAsync();
             if (!pollResponse.ContinuePolling)
             {
-                var authenticators = (List<AuthenticatorViewModel>)Session["authenticators"];
-                var oktaVerifyAuthenticator = authenticators.Where(authenticatorViewModel => authenticatorViewModel.Name == "Okta Verify").First();
-                authenticators.Remove(oktaVerifyAuthenticator);
                 pollResponse.Next = "/Account/Login";
             }
 
             return Json(pollResponse, JsonRequestBehavior.AllowGet);
         }
+
     }
 }

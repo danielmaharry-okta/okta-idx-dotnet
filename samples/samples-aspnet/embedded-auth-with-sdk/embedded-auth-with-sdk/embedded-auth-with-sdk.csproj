@@ -334,6 +334,7 @@
     <Compile Include="Models\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\InteractionCodeErrorViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
+    <Compile Include="Models\OktaVerifySelectAuthenticatorMethodModel.cs" />
     <Compile Include="Models\OktaVerifyEnrollModel.cs" />
     <Compile Include="Models\OktaVerifyEnrollPollModel.cs" />
     <Compile Include="Models\OktaVerifyEnrollWithEmailModel.cs" />
@@ -408,6 +409,7 @@
     <Content Include="Views\OktaVerify\EnrollWithEmail.cshtml" />
     <Content Include="Views\OktaVerify\EnrollWithPhoneNumber.cshtml" />
     <Content Include="Views\OktaVerify\EnrollWithQrCode.cshtml" />
+    <Content Include="Views\OktaVerify\SelectAuthenticatorMethod.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

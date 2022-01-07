@@ -16,12 +16,12 @@
 
             <div class="form-group">
                 <div class="col-md-10">
-                    @foreach (OktaVerifySelectEnrollmentChannelParameterModel remediationOptionParameter in Model.RemediationOptionParameters)
+                    @foreach (OktaVerifySelectEnrollmentChannelParameterModel option in Model.EnrollmentChannelOptions)
                     {
                     <div>
                         <label>
-                            @Html.RadioButton(remediationOptionParameter.Name, remediationOptionParameter.Value, new { id = $"{remediationOptionParameter.Value}_Id" })
-                            @remediationOptionParameter.LabelText
+                            @Html.RadioButton(option.Name, option.Value, new { id = $"{option.Value}_Id" })
+                            @option.LabelText
                         </label>
                     </div>
                     }

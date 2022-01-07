@@ -12,6 +12,7 @@
     using Microsoft.Owin.Security;
 
     using Okta.Idx.Sdk;
+    using Okta.Idx.Sdk.OktaVerify;
     using Okta.Sdk.Abstractions;
 
     public class ManageController : Controller

@@ -1,4 +1,4 @@
-﻿using Okta.Idx.Sdk;
+﻿using Okta.Idx.Sdk.OktaVerify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace embedded_auth_with_sdk.Models
 {
     public class OktaVerifyEnrollModel
     {
-        public OktaVerifyEnrollModel(OktaVerifyEnrollOptions oktaVerifyEnrollOptions, string pollEndpoint = "/OktaVerify/Poll")
+        public OktaVerifyEnrollModel(OktaVerifyEnrollOptions oktaVerifyEnrollOptions, string pollEndpoint = "/OktaVerify/EnrollPoll")
         {   
             this.OktaVerifyEnrollOptions = oktaVerifyEnrollOptions;
             this.QrCode = oktaVerifyEnrollOptions.QrCode;

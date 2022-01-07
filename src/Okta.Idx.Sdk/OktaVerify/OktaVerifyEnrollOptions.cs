@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Okta.Idx.Sdk
+namespace Okta.Idx.Sdk.OktaVerify
 {
     public class OktaVerifyEnrollOptions
     {
@@ -15,11 +15,11 @@ namespace Okta.Idx.Sdk
 
         public OktaVerifyEnrollOptions(AuthenticationResponse authenticationResponse, IIdxResponse idxResponse)
         {
-            this.AuthenticationResponse = authenticationResponse;
-            this.IdxContext = authenticationResponse.IdxContext;
-            this.StateHandle = idxResponse.StateHandle;
-            this.EnrollPollRemediationOption = idxResponse.FindRemediationOption(RemediationType.EnrollPoll);
-            this.SelectEnrollmentChannelRemediationOption = idxResponse.FindRemediationOption(RemediationType.SelectEnrollmentChannel);
+            AuthenticationResponse = authenticationResponse;
+            IdxContext = authenticationResponse.IdxContext;
+            StateHandle = idxResponse.StateHandle;
+            EnrollPollRemediationOption = idxResponse.FindRemediationOption(RemediationType.EnrollPoll);
+            SelectEnrollmentChannelRemediationOption = idxResponse.FindRemediationOption(RemediationType.SelectEnrollmentChannel);
         }
 
         protected internal AuthenticationResponse AuthenticationResponse { get; set; }
@@ -161,7 +161,7 @@ namespace Okta.Idx.Sdk
 
             IdxRequestPayload requestPayload = new IdxRequestPayload
             {
-                StateHandle = this.StateHandle,
+                StateHandle = StateHandle,
             };
 
             var idxResponse = await remediationOption.ProceedAsync(requestPayload);

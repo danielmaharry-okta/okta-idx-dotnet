@@ -26,15 +26,14 @@ namespace embedded_auth_with_sdk.Models
 
         public OktaVerifySelectEnrollmentChannelParameterModel(RemediationOptionParameter remediationOptionParameter)
         {
-            this.RemediationOptionParameter = remediationOptionParameter;
+            this.Value = remediationOptionParameter?.Value;
         }
 
         public string LabelText => LabelTexts[Value];
 
-        public string Value => RemediationOptionParameter?.Value;
+        public string Value { get; }
 
         public string Name => "SelectedChannel";
 
-        public RemediationOptionParameter RemediationOptionParameter { get; set; }
     }
 }

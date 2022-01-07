@@ -11,14 +11,14 @@ using System.Text;
 namespace Okta.Idx.Sdk
 {
     /// <summary>
-    /// Represents a parameter for a remediation.
+    /// Represents a parameter to a remediation option.
     /// </summary>
     public class RemediationOptionParameter : Resource
     {
         /// <summary>
         /// Gets the name.
         /// </summary>
-        public string Name => GetProperty<string>("name");
+        public string Name => GetStringProperty("name");
 
         /// <summary>
         /// Gets the label.
@@ -30,6 +30,9 @@ namespace Okta.Idx.Sdk
         /// </summary>
         public string Value => GetStringProperty("value");
 
+        /// <summary>
+        /// Gets a value indicating whether this parameter is required.
+        /// </summary>
         public bool? IsRequired => GetBooleanProperty("required");
     }
 }

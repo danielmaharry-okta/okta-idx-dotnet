@@ -21,6 +21,7 @@ using Newtonsoft.Json.Linq;
 using Okta.Idx.Sdk.Configuration;
 using Okta.Idx.Sdk.Extensions;
 using Okta.Idx.Sdk.Helpers;
+using Okta.Idx.Sdk.OktaVerify;
 using Okta.Sdk.Abstractions;
 using Okta.Sdk.Abstractions.Configuration.Providers.EnvironmentVariables;
 using Okta.Sdk.Abstractions.Configuration.Providers.Object;
@@ -594,12 +595,15 @@ namespace Okta.Idx.Sdk
                     }
                     else if (challengeResponse.ContainsRemediationOption(RemediationType.SelectAuthenticatorAuthenticate))
                     {
-                        return new AuthenticationResponse
+                        var authenticationResponse = new AuthenticationResponse
                         {
                             IdxContext = idxContext,
                             AuthenticationStatus = AuthenticationStatus.AwaitingChallengeAuthenticatorSelection,
                             Authenticators = IdxResponseHelper.ConvertToAuthenticators(challengeResponse.Authenticators.Value, challengeResponse.AuthenticatorEnrollments.Value),
                         };
+
+                        authenticationResponse.OktaVerifyAuthenticationOptions = new OktaVerifyAuthenticationOptions(authenticationResponse, challengeResponse);
+                        return authenticationResponse;
                     }
                     else
                     {
@@ -1198,8 +1202,6 @@ namespace Okta.Idx.Sdk
             var selectAuthenticatorResponse = await selectAuthenticatorEnrollRemediationOption.ProceedAsync(selectAuthenticatorRequest, cancellationToken);
             var currentRemediationType = RemediationType.Unknown;
             var status = AuthenticationStatus.AwaitingAuthenticatorVerification;
-            IRemediationOption enrollPollRemediationOption = null;
-            IRemediationOption selectEnrollmentChannelRemedationOption = null;
 
             // Check if flow is challenge authenticator or enroll authenticator, otherwise throw
             if (selectAuthenticatorResponse.Remediation.RemediationOptions.Any(x => x.Name == RemediationType.AuthenticatorEnrollmentData))

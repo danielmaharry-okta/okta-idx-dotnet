@@ -3,6 +3,7 @@
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 // </copyright>
 
+using Okta.Idx.Sdk.OktaVerify;
 using System.Collections.Generic;
 
 namespace Okta.Idx.Sdk
@@ -56,5 +57,15 @@ namespace Okta.Idx.Sdk
         /// Gets the options for Okta Verify enrollment.
         /// </summary>
         public OktaVerifyEnrollOptions OktaVerifyEnrollOptions { get; internal set; }
+
+        /// <summary>
+        /// Gets the options for Okta Verify authentication.
+        /// </summary>
+        public OktaVerifyAuthenticationOptions OktaVerifyAuthenticationOptions { get; internal set; }
+
+        /// <summary>
+        /// Gets a value that indicates whether Okta Verify is the current authenticator.
+        /// </summary>
+        public bool? IsOktaVerifyCurrentAuthenticator => OktaVerifyAuthenticationOptions?.CurrentAuthenticator?.Key.Equals("okta_verify");
     }
 }
