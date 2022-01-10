@@ -3,16 +3,29 @@
 namespace embedded_auth_with_sdk.Controllers
 {
     using embedded_auth_with_sdk.Models;
+    using Microsoft.Owin.Security;
+    using Okta.Idx.Sdk;
     using Okta.Idx.Sdk.OktaVerify;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using System.Text;
     using System.Threading.Tasks;
     using System.Web.Mvc;
 
     public class OktaVerifyController : Controller
     {
+        private readonly IAuthenticationManager _authenticationManager;
+
+        private readonly IIdxClient _idxClient;
+
+        public OktaVerifyController(IAuthenticationManager authenticationManager, IIdxClient idxClient)
+        {
+            _authenticationManager = authenticationManager;
+            _idxClient = idxClient;
+        }
+
         public ActionResult SelectAuthenticatorMethod()
         {
             var oktaVerifyAuthenticationOptions = (OktaVerifyAuthenticationOptions)Session[nameof(OktaVerifyAuthenticationOptions)];
@@ -22,7 +35,7 @@ namespace embedded_auth_with_sdk.Controllers
         public ActionResult Enroll()
         {
             var oktaVerifyEnrollOptions = (OktaVerifyEnrollOptions)Session[nameof(OktaVerifyEnrollOptions)];
-            return View("EnrollWithQrCode", new OktaVerifyEnrollModel(oktaVerifyEnrollOptions));
+            return View("EnrollWithQrCode", new OktaVerifyEnrollPollModel(oktaVerifyEnrollOptions));
         }
 
         [HttpGet]
@@ -64,7 +77,7 @@ namespace embedded_auth_with_sdk.Controllers
         {
             var oktaVerifyEnrollOptions = (OktaVerifyEnrollOptions)Session[nameof(OktaVerifyEnrollOptions)];
             _ = oktaVerifyEnrollOptions.SendLinkToEmailAsync(emailModel.Email);
-            var oktaVerifyEnrollModel = new OktaVerifyEnrollModel(oktaVerifyEnrollOptions)
+            var oktaVerifyEnrollModel = new OktaVerifyEnrollPollModel(oktaVerifyEnrollOptions)
             {
                 Message = "An activation link was sent to your email, use it to complete Okta Verify enrollment."
             };
@@ -77,7 +90,7 @@ namespace embedded_auth_with_sdk.Controllers
         {
             var oktaVerifyEnrollOptions = (OktaVerifyEnrollOptions)Session[nameof(OktaVerifyEnrollOptions)];
             _ = oktaVerifyEnrollOptions.SendLinkToPhoneNumberAsync($"{phoneNumberModel.CountryCode}{phoneNumberModel.PhoneNumber}");
-            var oktaVerifyEnrollModel = new OktaVerifyEnrollModel(oktaVerifyEnrollOptions)
+            var oktaVerifyEnrollModel = new OktaVerifyEnrollPollModel(oktaVerifyEnrollOptions)
             {
                 Message = "An activation link was sent to your phone via sms, use it to complete Okta Verify enrollment."
             };
@@ -98,5 +111,51 @@ namespace embedded_auth_with_sdk.Controllers
             return Json(pollResponse, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> SelectAuthenticatorMethod(string methodType)
+        {
+            var oktaVerifyAuthenticationOptions = (OktaVerifyAuthenticationOptions)Session[nameof(OktaVerifyAuthenticationOptions)];
+            switch (methodType)
+            {
+                case "totp":
+                    _ = await oktaVerifyAuthenticationOptions.SelectTotpMethodAsync();
+                    return View("EnterCode");
+                case "push":
+                    _ = await oktaVerifyAuthenticationOptions.SelectPushMethodAsync();
+                    return View("PushSent", new OktaVerifySelectAuthenticatorMethodModel(oktaVerifyAuthenticationOptions));
+            }
+
+            throw new ArgumentException($"Unrecognized Okta Verify authentication method: {methodType}");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EnterCode(OktaVerifyEnterCodeModel oktaVerifyEnterCodeModel)
+        {
+            var oktaVerifyAuthenticationOptions = (OktaVerifyAuthenticationOptions)Session[nameof(OktaVerifyAuthenticationOptions)];
+            var authenticationResponse = await oktaVerifyAuthenticationOptions.EnterCodeAsync(oktaVerifyEnterCodeModel.Code);
+            if(authenticationResponse.AuthenticationStatus == AuthenticationStatus.Success)
+            {
+                ClaimsIdentity identity = await AuthenticationHelper.GetIdentityFromTokenResponseAsync(_idxClient.Configuration, oktaVerifyAuthenticationOptions.TokenInfo);
+                _authenticationManager.SignIn(new AuthenticationProperties(), identity);
+                return RedirectToAction("Index", "Home");
+            }
+            ModelState.AddModelError("Code", authenticationResponse.MessageToUser);
+            return View("EnterCode", oktaVerifyEnterCodeModel);
+        }
+
+        public async Task<ActionResult> ChallengePoll()
+        {
+            var oktaVerifyAuthenticationOptions = (OktaVerifyAuthenticationOptions)Session[nameof(OktaVerifyAuthenticationOptions)];
+
+            var pollResponse = await oktaVerifyAuthenticationOptions.PollOnceAsync();
+            if (!pollResponse.ContinuePolling)
+            {
+                ClaimsIdentity identity = await AuthenticationHelper.GetIdentityFromTokenResponseAsync(_idxClient.Configuration, oktaVerifyAuthenticationOptions.TokenInfo);
+                _authenticationManager.SignIn(new AuthenticationProperties(), identity);
+                pollResponse.Next = "/Home/Index";
+            }
+
+            return Json(pollResponse, JsonRequestBehavior.AllowGet);
+        }
     }
 }

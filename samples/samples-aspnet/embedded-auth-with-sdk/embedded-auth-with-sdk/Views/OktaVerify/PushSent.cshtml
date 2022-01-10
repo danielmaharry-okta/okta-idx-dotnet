@@ -1,18 +1,15 @@
-﻿@model embedded_auth_with_sdk.Models.OktaVerifyEnrollPollModel
+@model embedded_auth_with_sdk.Models.OktaVerifySelectAuthenticatorMethodModel
+@using embedded_auth_with_sdk.Models;
+@using Okta.Idx.Sdk;
 
 @{
-    ViewBag.Title = ViewBag.Title ?? "Enroll Okta Verify";
+    ViewBag.Title = ViewBag.Title ?? "Authenticate with Okta Verify";
 }
 
 <div class="row d-center">
     <div class="col-md-8">
-
-        <h4>Set up Okta Verify</h4>
-        <ol>
-            <li>On your mobile device, download the Okta Verify app from the App Store (iPhone and iPad) or Google Play (Android devices).</li>
-            <li>@Model.Message</li>
-        </ol>
-        <hr />        
+        <h3>Push Sent</h3>
+        @Html.ActionLink("Verify with something else", "SelectAuthenticatorMethod")
     </div>
 </div>
 

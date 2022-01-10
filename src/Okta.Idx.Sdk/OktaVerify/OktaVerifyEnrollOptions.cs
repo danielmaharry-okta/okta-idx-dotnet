@@ -153,10 +153,9 @@ namespace Okta.Idx.Sdk.OktaVerify
 
         public async Task<PollResponse> PollOnceAsync()
         {
-            IRemediationOption remediationOption = EnrollPollRemediationOption;
-            if (remediationOption.Name != RemediationType.EnrollPoll)
+            if (EnrollPollRemediationOption.Name != RemediationType.EnrollPoll)
             {
-                throw new ArgumentException(string.Format("Expected remediation option of type '{0}', the specified remediation option is of type {1}", RemediationType.EnrollPoll, remediationOption.Name));
+                throw new ArgumentException($"Expected remediation option of type '{RemediationType.EnrollPoll}', the specified remediation option is of type {EnrollPollRemediationOption.Name}.");
             }
 
             IdxRequestPayload requestPayload = new IdxRequestPayload
@@ -164,7 +163,7 @@ namespace Okta.Idx.Sdk.OktaVerify
                 StateHandle = StateHandle,
             };
 
-            var idxResponse = await remediationOption.ProceedAsync(requestPayload);
+            var idxResponse = await EnrollPollRemediationOption.ProceedAsync(requestPayload);
             bool continuePolling = idxResponse.ContainsRemediationOption(RemediationType.EnrollPoll, out IRemediationOption enrollPollRemediationOption);
 
             return new PollResponse

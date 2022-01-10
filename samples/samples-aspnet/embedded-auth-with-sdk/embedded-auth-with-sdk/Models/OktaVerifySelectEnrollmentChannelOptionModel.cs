@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace embedded_auth_with_sdk.Models
 {
-    public class OktaVerifySelectEnrollmentChannelParameterModel
+    public class OktaVerifySelectEnrollmentChannelOptionModel
     {
-        static OktaVerifySelectEnrollmentChannelParameterModel()
+        static OktaVerifySelectEnrollmentChannelOptionModel()
         {
             LabelTexts = new Dictionary<string, string>
             {
@@ -20,11 +20,11 @@ namespace embedded_auth_with_sdk.Models
         }
         public static Dictionary<string, string> LabelTexts { get; }
 
-        public OktaVerifySelectEnrollmentChannelParameterModel()
+        public OktaVerifySelectEnrollmentChannelOptionModel()
         { 
         }
 
-        public OktaVerifySelectEnrollmentChannelParameterModel(RemediationOptionParameter remediationOptionParameter)
+        public OktaVerifySelectEnrollmentChannelOptionModel(RemediationOptionParameter remediationOptionParameter)
         {
             this.Value = remediationOptionParameter?.Value;
         }

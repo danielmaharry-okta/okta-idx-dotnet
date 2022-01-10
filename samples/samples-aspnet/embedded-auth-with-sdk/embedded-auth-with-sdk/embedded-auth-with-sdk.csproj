@@ -334,15 +334,15 @@
     <Compile Include="Models\ForgotPasswordViewModel.cs" />
     <Compile Include="Models\InteractionCodeErrorViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
+    <Compile Include="Models\OktaVerifyEnterCodeModel.cs" />
     <Compile Include="Models\OktaVerifySelectAuthenticatorMethodModel.cs" />
-    <Compile Include="Models\OktaVerifyEnrollModel.cs" />
     <Compile Include="Models\OktaVerifyEnrollPollModel.cs" />
     <Compile Include="Models\OktaVerifyEnrollWithEmailModel.cs" />
     <Compile Include="Models\OktaVerifyEnrollWithPhoneNumberModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\SelectAuthenticatorMethodViewModel.cs" />
     <Compile Include="Models\SelectAuthenticatorViewModel.cs" />
-    <Compile Include="Models\OktaVerifySelectEnrollmentChannelParameterModel.cs" />
+    <Compile Include="Models\OktaVerifySelectEnrollmentChannelOptionModel.cs" />
     <Compile Include="Models\OktaVerifySelectEnrollmentChannelModel.cs" />
     <Compile Include="Models\SelectRecoveryAuthenticatorViewModel.cs" />
     <Compile Include="Models\VerifyAuthenticatorViewModel.cs" />
@@ -410,6 +410,8 @@
     <Content Include="Views\OktaVerify\EnrollWithPhoneNumber.cshtml" />
     <Content Include="Views\OktaVerify\EnrollWithQrCode.cshtml" />
     <Content Include="Views\OktaVerify\SelectAuthenticatorMethod.cshtml" />
+    <Content Include="Views\OktaVerify\PushSent.cshtml" />
+    <Content Include="Views\OktaVerify\EnterCode.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

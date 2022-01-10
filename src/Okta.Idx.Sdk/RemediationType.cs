@@ -31,6 +31,11 @@ namespace Okta.Idx.Sdk
         public static readonly string ChallengeAuthenticator = "challenge-authenticator";
 
         /// <summary>
+        /// challenge-poll
+        /// </summary>
+        public static readonly string ChallengePoll = "challenge-poll";
+
+        /// <summary>
         /// select-authenticator-authenticate
         /// </summary>
         public static readonly string SelectAuthenticatorAuthenticate = "select-authenticator-authenticate";

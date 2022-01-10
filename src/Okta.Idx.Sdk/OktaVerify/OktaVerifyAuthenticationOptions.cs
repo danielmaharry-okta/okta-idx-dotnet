@@ -11,34 +11,35 @@ namespace Okta.Idx.Sdk.OktaVerify
         public OktaVerifyAuthenticationOptions(AuthenticationResponse authenticationResponse, IIdxResponse idxResponse)
         {
             this.AuthenticationResponse = authenticationResponse;
+            this.IdxContext = authenticationResponse.IdxContext;
             this.StateHandle = idxResponse.StateHandle;
-            this.AuthenticatorVerificationDataRemediationOption = idxResponse.FindRemediationOption(RemediationType.AuthenticatorVerificationData);
             this.SelectAuthenticatorAuthenticateRemediationOption = idxResponse.FindRemediationOption(RemediationType.SelectAuthenticatorAuthenticate);
-            this.CurrentAuthenticator = idxResponse.GetProperty<OktaVerifyAuthenticatorValue>("currentAuthenticator");
+            this.CurrentAuthenticator = idxResponse.GetProperty<IIdxResponse>("currentAuthenticator").GetProperty<AuthenticatorValue>("value");
         }
 
         protected internal AuthenticationResponse AuthenticationResponse { get; set; }
 
-        protected IdxContext IdxContext { get; }
+        protected IIdxContext IdxContext { get; }
 
         public string StateHandle { get; set; }
 
-        protected IRemediationOption AuthenticatorVerificationDataRemediationOption { get; }
-
         protected IRemediationOption SelectAuthenticatorAuthenticateRemediationOption { get; }
 
-        protected IRemediationOption ChallengeAuthenticatorRemediationOption { get; private set; }
+        protected IRemediationOption ChallengePollRemediationOption { get; private set; }
+
+        protected IRemediationOption ChallengeAuthenticatorRemedationOption { get; private set; }
 
         protected internal IAuthenticatorValue CurrentAuthenticator { get; }
 
-        public async Task<AuthenticationResponse> SelectOktaVerifyMethod(string methodType)
+        protected async Task<AuthenticationResponse> SelectOktaVerifyMethodAsync(string methodType)
         {
             IdxRequestPayload idxRequestPayload = new IdxRequestPayload();
             idxRequestPayload.SetProperty("authenticator", new { id = this.CurrentAuthenticator.Id, methodType = methodType });
             idxRequestPayload.SetProperty("stateHandle", StateHandle);
 
             var selectAuthenticatorResponse = await SelectAuthenticatorAuthenticateRemediationOption.ProceedAsync(idxRequestPayload);
-            this.ChallengeAuthenticatorRemediationOption = selectAuthenticatorResponse.FindRemediationOption(RemediationType.ChallengeAuthenticator);
+            this.ChallengePollRemediationOption = selectAuthenticatorResponse.FindRemediationOption(RemediationType.ChallengePoll);
+            this.ChallengeAuthenticatorRemedationOption = selectAuthenticatorResponse.FindRemediationOption(RemediationType.ChallengeAuthenticator);
 
             var authenticationResponse = new AuthenticationResponse
             {
@@ -48,6 +49,76 @@ namespace Okta.Idx.Sdk.OktaVerify
             };
 
             return authenticationResponse;
+        }
+
+        public ITokenResponse TokenInfo { get; internal set; }
+
+        public async Task<AuthenticationResponse> SelectTotpMethodAsync()
+        {
+            return await SelectOktaVerifyMethodAsync("totp");
+        }
+
+        public async Task<AuthenticationResponse> SelectPushMethodAsync()
+        {
+            return await SelectOktaVerifyMethodAsync("push");
+        }
+
+        public async Task<AuthenticationResponse> EnterCodeAsync(string code)
+        {
+            if (ChallengeAuthenticatorRemedationOption.Name != RemediationType.ChallengeAuthenticator)
+            {
+                throw new ArgumentException($"Expected remediation option of type '{RemediationType.ChallengeAuthenticator}', the specified remediation option is of type {ChallengeAuthenticatorRemedationOption.Name}.");
+            }
+
+            IdxRequestPayload requestPayload = new IdxRequestPayload
+            {
+                StateHandle = StateHandle,
+            };
+            requestPayload.SetProperty("credentials", new { totp = code });
+            try
+            {
+                var challengeResponse = await ChallengeAuthenticatorRemedationOption.ProceedAsync(requestPayload);
+                TokenInfo = await challengeResponse.SuccessWithInteractionCode.ExchangeCodeAsync(IdxContext);
+                return new AuthenticationResponse
+                {
+                    AuthenticationStatus = AuthenticationStatus.Success,
+                    TokenInfo = TokenInfo,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticationResponse
+                {
+                    AuthenticationStatus = AuthenticationStatus.Exception,
+                    MessageToUser = ex.Message,
+                };
+            }
+        }
+
+        public async Task<PollResponse> PollOnceAsync()
+        {
+            if (ChallengePollRemediationOption.Name != RemediationType.ChallengePoll)
+            {
+                throw new ArgumentException($"Expected remediation option of type '{RemediationType.ChallengePoll}', the specified remediation option is of type {ChallengePollRemediationOption.Name}.");
+            }
+
+            IdxRequestPayload requestPayload = new IdxRequestPayload
+            {
+                StateHandle = StateHandle,
+            };
+
+            var challengeResponse = await ChallengePollRemediationOption.ProceedAsync(requestPayload);
+            bool continuePolling = challengeResponse.ContainsRemediationOption(RemediationType.ChallengePoll, out IRemediationOption challengePollRemediationOption);
+            if (continuePolling == false)
+            {
+                this.TokenInfo = await challengeResponse.SuccessWithInteractionCode.ExchangeCodeAsync(IdxContext);
+            }
+
+            return new PollResponse
+            {
+                Refresh = challengePollRemediationOption?.Refresh,
+                ContinuePolling = continuePolling,
+            };
         }
     }
 }
