@@ -17,7 +17,6 @@ namespace embedded_auth_with_sdk.Models
 
         public OktaVerifyAuthenticationOptions OktaVerifyAuthenticationOptions { get; }
 
-
         public string PollEndpoint { get; set; }
 
         public int? RefreshInterval { get; set; }

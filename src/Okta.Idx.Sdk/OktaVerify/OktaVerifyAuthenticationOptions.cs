@@ -1,13 +1,24 @@
-﻿using Okta.Idx.Sdk.Helpers;
+﻿// <copyright file="OktaVerifyAuthenticationOptions.cs" company="Okta, Inc">
+// Copyright (c) 2020 - present Okta, Inc. All rights reserved.
+// Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
+// </copyright>
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using Okta.Idx.Sdk.Helpers;
 
 namespace Okta.Idx.Sdk.OktaVerify
 {
+    /// <summary>
+    /// A class that contains the options for authentication with Okta Verify.
+    /// </summary>
     public class OktaVerifyAuthenticationOptions
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OktaVerifyAuthenticationOptions"/> class.
+        /// </summary>
+        /// <param name="authenticationResponse">The authentication response.</param>
+        /// <param name="idxResponse">The Idx response.</param>
         public OktaVerifyAuthenticationOptions(AuthenticationResponse authenticationResponse, IIdxResponse idxResponse)
         {
             this.AuthenticationResponse = authenticationResponse;
@@ -17,20 +28,46 @@ namespace Okta.Idx.Sdk.OktaVerify
             this.CurrentAuthenticator = idxResponse.GetProperty<IIdxResponse>("currentAuthenticator").GetProperty<AuthenticatorValue>("value");
         }
 
+        /// <summary>
+        /// Gets or sets the authentication response.
+        /// </summary>
         protected internal AuthenticationResponse AuthenticationResponse { get; set; }
 
+        /// <summary>
+        /// Gets the Idx context.
+        /// </summary>
         protected IIdxContext IdxContext { get; }
 
+        /// <summary>
+        /// Gets or sets the state handle.
+        /// </summary>
         public string StateHandle { get; set; }
 
+        /// <summary>
+        /// Gets the `select-authenticator-authenticate` remediation option.
+        /// </summary>
         protected IRemediationOption SelectAuthenticatorAuthenticateRemediationOption { get; }
 
+        /// <summary>
+        /// Gets the `challenge-poll` remediation option.
+        /// </summary>
         protected IRemediationOption ChallengePollRemediationOption { get; private set; }
 
+        /// <summary>
+        /// Gets the `challenge-authenticator` remediation option.
+        /// </summary>
         protected IRemediationOption ChallengeAuthenticatorRemedationOption { get; private set; }
 
+        /// <summary>
+        /// Gets the current authenticator.
+        /// </summary>
         protected internal IAuthenticatorValue CurrentAuthenticator { get; }
 
+        /// <summary>
+        /// Selects the specified authentication method type.
+        /// </summary>
+        /// <param name="methodType">The method type.</param>
+        /// <returns>The authentication response.</returns>
         protected async Task<AuthenticationResponse> SelectOktaVerifyMethodAsync(string methodType)
         {
             IdxRequestPayload idxRequestPayload = new IdxRequestPayload();
@@ -51,18 +88,35 @@ namespace Okta.Idx.Sdk.OktaVerify
             return authenticationResponse;
         }
 
+        /// <summary>
+        /// Gets the token response.
+        /// </summary>
         public ITokenResponse TokenInfo { get; internal set; }
 
+        /// <summary>
+        /// Selects the TOTP authentication method.
+        /// </summary>
+        /// <returns>The authentication response.</returns>
         public async Task<AuthenticationResponse> SelectTotpMethodAsync()
         {
             return await SelectOktaVerifyMethodAsync("totp");
         }
 
+        /// <summary>
+        /// Selects the push authentication method.
+        /// </summary>
+        /// <returns>The authentication response.</returns>
         public async Task<AuthenticationResponse> SelectPushMethodAsync()
         {
             return await SelectOktaVerifyMethodAsync("push");
         }
 
+        /// <summary>
+        /// Submits the specified TOTP code for authentication.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <returns>The authentication response.</returns>
+        /// <exception cref="ArgumentException">If the challenge authenticator is not valid.</exception>
         public async Task<AuthenticationResponse> EnterCodeAsync(string code)
         {
             if (ChallengeAuthenticatorRemedationOption.Name != RemediationType.ChallengeAuthenticator)
@@ -95,6 +149,11 @@ namespace Okta.Idx.Sdk.OktaVerify
             }
         }
 
+        /// <summary>
+        /// Sends a request to the challenge polling endpoint.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">If the challenge authenticator is not valid.</exception>
         public async Task<PollResponse> PollOnceAsync()
         {
             if (ChallengePollRemediationOption.Name != RemediationType.ChallengePoll)
