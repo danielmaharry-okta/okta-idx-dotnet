@@ -1,10 +1,4 @@
-﻿using Okta.Idx.Sdk.OktaVerify;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace embedded_auth_with_sdk.Models
 {
