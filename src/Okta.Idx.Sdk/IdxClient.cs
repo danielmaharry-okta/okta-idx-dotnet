@@ -45,7 +45,6 @@ namespace Okta.Idx.Sdk
         /// </summary>
         private Okta.Sdk.Abstractions.RequestContext _deprecatedRequestContext;
 
-
         private ILogger _logger;
 
         static IdxClient()
@@ -174,8 +173,6 @@ namespace Okta.Idx.Sdk
                 NullLogger.Instance,
                 userAgentBuilder);
         }
-
-        private IdxConfiguration configuration;
 
         /// <summary>
         /// Gets or sets the Okta configuration.
@@ -1544,7 +1541,8 @@ namespace Okta.Idx.Sdk
             }
             else
             {
-                currentAuthenticator = IdxResponseHelper.ConvertToAuthenticator(selectAuthenticatorResponse.Authenticators.Value,
+                currentAuthenticator = IdxResponseHelper.ConvertToAuthenticator(
+                    selectAuthenticatorResponse.Authenticators.Value,
                     selectAuthenticatorResponse.CurrentAuthenticator.Value,
                     selectAuthenticatorResponse.AuthenticatorEnrollments.Value);
             }

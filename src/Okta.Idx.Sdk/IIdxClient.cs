@@ -213,7 +213,7 @@ namespace Okta.Idx.Sdk
         /// Start an interaction to be completed by the sign-in widget.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="requestContext">The request context.</param> 
+        /// <param name="requestContext">The request context.</param>
         /// <returns>The widget sign in response.</returns>
         Task<WidgetSignInResponse> StartWidgetSignInAsync(CancellationToken cancellationToken = default, RequestContext requestContext = null);
 

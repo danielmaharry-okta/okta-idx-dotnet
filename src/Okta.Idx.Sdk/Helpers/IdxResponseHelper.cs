@@ -46,7 +46,8 @@ namespace Okta.Idx.Sdk.Helpers
 
         internal static IAuthenticator ConvertToAuthenticator(IIdxResponse idxResponse)
         {
-            var authenticator = ConvertToAuthenticator(idxResponse.Authenticators.Value,
+            var authenticator = ConvertToAuthenticator(
+                idxResponse.Authenticators.Value,
                 idxResponse.CurrentAuthenticator.Value,
                 idxResponse.AuthenticatorEnrollments.Value);
 
